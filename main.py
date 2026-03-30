@@ -10,7 +10,7 @@ app = FastAPI()
 # This creates tables in database if they don't exist
 models.Base.metadata.create_all(bind=engine)
 
-# Dependency function to get DB session
+# Dependency function to get DB session -- In simple for 'Database connection'
 def get_db():
     db = SessionLocal()   # Create a new database session or Open DB connection
     try:
@@ -30,7 +30,7 @@ def get_db():
 def home():
     return {"message": "Employee System API Running"}
 
-#POST API To create employee
+#POST API To create employee  -- CREATE Operation
 @app.post("/employees")
 def create_employee(emp: EmployeeCreate, db: Session = Depends(get_db)):
     #Calculate Bonus (Ratings and Perc Bonus: 5 - 25%, 4 - 20%, 3 - 10%)
@@ -62,8 +62,13 @@ def create_employee(emp: EmployeeCreate, db: Session = Depends(get_db)):
 
     # Refresh object to get updated data (like auto-generated ID)
     db.refresh(new_employee)
-
+    
     return new_employee     #return saved Employee
+
+#GET API To create employee  -- READ Operation
+@app.get("/employees")
+def get_employees(db: Session = Depends(get_db)):
+    return db.query(models.Employee).all()
 # def create_emloyee(emp: Employee):  #add employee Function
 #     return {
 #         "message": "Employee received",
